@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>8-Week Cycling & Strength Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .tab:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+        .tab.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        /* Workout Flow Styles */
+        .workout-container {
+            position: relative;
+            overflow: hidden;
+            min-height: 500px;
+        }
+
+        .workout-card {
+            background: white;
+            border-radius: 20px;
+            padding: 0;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            position: relative;
+            touch-action: pan-y;
+            transition: transform 0.3s ease;
+        }
+
+        .workout-card.swiping {
+            transition: none;
+        }
+
+        .workout-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 20px 20px 0 0;
+            text-align: center;
+        }
+
+        .workout-progress {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+
+        .workout-title {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 5px;
+        }
+
+        .workout-subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .workout-body {
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .exercise-description {
+            color: #666;
+            font-size: 16px;
+            line-height: 1.8;
+            margin: 20px 0;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .exercise-notes {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 10px;
+            color: #856404;
+            font-size: 14px;
+            margin: 20px 0;
+            border-left: 4px solid #ffc107;
+        }
+
+        .set-display {
+            font-size: 120px;
+            font-weight: 800;
+            color: #667eea;
+            margin: 30px 0;
+            line-height: 1;
+        }
+
+        .rest-display {
+            padding: 60px 20px;
+        }
+
+        .rest-timer {
+            font-size: 96px;
+            font-weight: 800;
+            color: #667eea;
+            margin: 30px 0;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .rest-message {
+            font-size: 24px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .swipe-hint {
+            text-align: center;
+            padding: 20px;
+            color: #999;
+            font-size: 14px;
+            border-top: 1px solid #eee;
+        }
+
+        .swipe-hint svg {
+            width: 24px;
+            height: 24px;
+            margin: 0 5px;
+            vertical-align: middle;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .completion-card {
+            text-align: center;
+            padding: 60px 30px;
+        }
+
+        .completion-icon {
+            font-size: 96px;
+            margin-bottom: 20px;
+        }
+
+        .completion-title {
+            font-size: 36px;
+            font-weight: 800;
+            color: #28a745;
+            margin-bottom: 10px;
+        }
+
+        .completion-message {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .week-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .week-btn {
+            padding: 10px 20px;
+            background: #f0f0f0;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .week-btn:hover {
+            background: #e0e0e0;
+        }
+
+        .week-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .session-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .session-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .session-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+
+        .session-card h3 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .session-card p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .progress-bar-container {
+            background: #e9ecef;
+            height: 6px;
+            border-radius: 3px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+
+        .rest-controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .rest-preset {
+            padding: 10px 20px;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .rest-preset:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        /* Cycling Tab Styles */
+        .cycling-schedule {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+        }
+
+        .workout-type {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            margin: 2px;
+        }
+
+        .type-act { background: #d4edda; color: #155724; }
+        .type-thresh { background: #fff3cd; color: #856404; }
+        .type-rec { background: #d1ecf1; color: #0c5460; }
+        .type-vo2 { background: #f8d7da; color: #721c24; }
+        .type-end { background: #e2e3e5; color: #383d41; }
+        .type-rest { background: #f0f0f0; color: #666; }
+
+        .cycling-details {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        .cycling-details h4 {
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+
+        .cycling-details p {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+
+        .info-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .info-section h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            header {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .workout-title {
+                font-size: 28px;
+            }
+
+            .set-display {
+                font-size: 80px;
+            }
+
+            .rest-timer {
+                font-size: 72px;
+            }
+
+            .btn {
+                padding: 12px 30px;
+                font-size: 16px;
+            }
+
+            table {
+                font-size: 14px;
+            }
+
+            th, td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>8-Week Cycling & Strength Tracker</h1>
+            <p class="subtitle">Building toward Marin rides with threshold fitness and hip stability | FTP: 193W</p>
+        </header>
+
+        <div class="tabs">
+            <button class="tab active" data-tab="strength">Strength Sessions</button>
+            <button class="tab" data-tab="cycling">Cycling Schedule</button>
+            <button class="tab" data-tab="info">Exercise Guide</button>
+        </div>
+
+        <!-- Strength Tab -->
+        <div class="tab-content active" id="strength">
+            <div class="card">
+                <h2>Select Week</h2>
+                <div class="week-selector">
+                    <button class="week-btn active" data-week="1-2">Weeks 1-2</button>
+                    <button class="week-btn" data-week="3-4">Weeks 3-4</button>
+                    <button class="week-btn" data-week="5-6">Weeks 5-6</button>
+                    <button class="week-btn" data-week="7-8">Weeks 7-8</button>
+                </div>
+            </div>
+
+            <div class="card" id="sessionSelect">
+                <h2>Choose Your Workout</h2>
+                <div class="session-selector">
+                    <div class="session-card" onclick="startWorkout('bandWork')">
+                        <h3>Hip & Glute Activation</h3>
+                        <p>Essential warmup before strength sessions</p>
+                        <p style="margin-top: 10px; font-size: 16px; font-weight: 700;">5 exercises</p>
+                    </div>
+                    <div class="session-card" onclick="startWorkout('sessionA')">
+                        <h3>Session A: Squat & Pull</h3>
+                        <p>Wednesday • Squatting patterns & pulling movements</p>
+                        <p style="margin-top: 10px; font-size: 16px; font-weight: 700;">6 exercises</p>
+                    </div>
+                    <div class="session-card" onclick="startWorkout('sessionB')">
+                        <h3>Session B: Hinge & Lunge</h3>
+                        <p>Saturday • Hip hinge patterns & single-leg work</p>
+                        <p style="margin-top: 10px; font-size: 16px; font-weight: 700;">6 exercises</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" id="workoutView" style="display: none;">
+                <div class="workout-container">
+                    <div class="workout-card" id="workoutCard"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cycling Tab -->
+        <div class="tab-content" id="cycling">
+            <div class="card">
+                <h2>8-Week Cycling Schedule</h2>
+                <div class="cycling-schedule">
+                    <table id="cyclingTable"></table>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Cycling Workout Details</h2>
+                <div id="cyclingDetails"></div>
+            </div>
+        </div>
+
+        <!-- Info Tab -->
+        <div class="tab-content" id="info">
+            <div class="card">
+                <h2>Exercise Descriptions & Form Tips</h2>
+                <div id="exerciseInfo"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Exercise data
+        const exercises = {
+            sessionA: [
+                {
+                    name: "Goblet Squat",
+                    prescription: {
+                        "1-2": "3×10 @ 20-25lb",
+                        "3-4": "3×10 @ 30lb",
+                        "5-6": "3×12 @ 30-35lb",
+                        "7-8": "3×10 @ 40lb"
+                    },
+                    description: "Hold a dumbbell vertically against your chest with both hands. Squat down keeping your chest up and elbows inside your knees. Drive through your heels to stand.",
+                    notes: "Depth over weight - Focus on getting full depth with knees tracking over toes"
+                },
+                {
+                    name: "Romanian Deadlift",
+                    prescription: {
+                        "1-2": "3×10 @ 20lb each",
+                        "3-4": "3×10 @ 25lb each",
+                        "5-6": "3×12 @ 25lb each",
+                        "7-8": "3×10 @ 30lb each"
+                    },
+                    description: "Hold dumbbells in front of thighs. Hinge at hips, pushing them back while keeping a slight knee bend. Lower weights along legs until you feel hamstring stretch, then drive hips forward to return.",
+                    notes: "Feel the hamstring stretch - This is a hip hinge movement, not a squat"
+                },
+                {
+                    name: "Bulgarian Split Squat",
+                    prescription: {
+                        "1-2": "2×8 bodyweight",
+                        "3-4": "2×8 @ 10lb each",
+                        "5-6": "2×10 @ 10lb each",
+                        "7-8": "2×10 @ 15lb each"
+                    },
+                    description: "Place rear foot on bench behind you. Lower down on front leg keeping torso upright and front knee tracking over toe. Drive through front heel to return.",
+                    notes: "Build slowly for knees - Take 3 seconds to lower down for stability"
+                },
+                {
+                    name: "Bent-Over Row",
+                    prescription: {
+                        "1-2": "3×10 @ 20lb each",
+                        "3-4": "3×10 @ 25lb each",
+                        "5-6": "3×12 @ 25lb each",
+                        "7-8": "3×10 @ 30lb each"
+                    },
+                    description: "Hinge at hips with flat back, dumbbells hanging down. Pull dumbbells to ribcage, driving elbows back. Squeeze shoulder blades together at top.",
+                    notes: "Squeeze shoulder blades - Think about pulling elbows back, not just lifting weight"
+                },
+                {
+                    name: "Dead Bug",
+                    prescription: {
+                        "1-2": "3×8 each side",
+                        "3-4": "3×10 each side",
+                        "5-6": "3×10 each side",
+                        "7-8": "3×12 each side"
+                    },
+                    description: "Lie on back with arms extended up and knees bent at 90°. Lower opposite arm and leg while keeping lower back pressed to floor. Return and repeat other side.",
+                    notes: "Slow and controlled - Press lower back into floor throughout the movement"
+                },
+                {
+                    name: "Pallof Press",
+                    prescription: {
+                        "1-2": "2×10 each side",
+                        "3-4": "2×12 each side",
+                        "5-6": "3×10 each side",
+                        "7-8": "3×12 each side"
+                    },
+                    description: "Stand sideways to anchor point with band at chest height. Hold band at chest, then press straight out resisting rotation. Return to chest.",
+                    notes: "Progress band tension - Fight the rotation, keep hips and shoulders square"
+                }
+            ],
+            sessionB: [
+                {
+                    name: "Dumbbell Deadlift",
+                    prescription: {
+                        "1-2": "3×10 @ 25lb each",
+                        "3-4": "3×10 @ 30lb each",
+                        "5-6": "3×12 @ 30lb each",
+                        "7-8": "3×10 @ 35lb each"
+                    },
+                    description: "Stand with dumbbells at sides. Hinge at hips and bend knees to lower weights toward floor. Keep back flat and chest up. Drive through heels and squeeze glutes at top.",
+                    notes: "Full hip extension - Really squeeze glutes at the top of each rep"
+                },
+                {
+                    name: "Reverse Lunge",
+                    prescription: {
+                        "1-2": "2×8 bodyweight",
+                        "3-4": "2×8 @ 10lb each",
+                        "5-6": "2×10 @ 10lb each",
+                        "7-8": "2×10 @ 15lb each"
+                    },
+                    description: "Step backward into lunge position, lowering back knee toward floor. Front knee stays over ankle. Push through front heel to return to standing.",
+                    notes: "Slow eccentric for knees - Take 3 seconds to lower, easier on knees than forward lunges"
+                },
+                {
+                    name: "Step-Ups",
+                    prescription: {
+                        "1-2": "2×8 each bodyweight",
+                        "3-4": "2×10 each bodyweight",
+                        "5-6": "2×10 each @ 10lb each",
+                        "7-8": "2×10 each @ 15lb each"
+                    },
+                    description: "Place one foot fully on box/bench. Drive through that heel to step up, bringing other foot to meet it. Step down with control.",
+                    notes: "Control the descent - This is where stability is built, don't just drop down"
+                },
+                {
+                    name: "Push-Ups",
+                    prescription: {
+                        "1-2": "3×10",
+                        "3-4": "3×12",
+                        "5-6": "3×12",
+                        "7-8": "3×15"
+                    },
+                    description: "Start in plank position with hands slightly wider than shoulders. Lower chest to floor keeping body straight. Push back up to starting position.",
+                    notes: "Incline if needed - Use a bench or counter if regular push-ups are too challenging"
+                },
+                {
+                    name: "Plank",
+                    prescription: {
+                        "1-2": "3×30 sec",
+                        "3-4": "3×40 sec",
+                        "5-6": "3×45 sec",
+                        "7-8": "3×45 sec"
+                    },
+                    description: "Support body on forearms and toes, maintaining straight line from head to heels. Engage core and avoid sagging hips or raising butt.",
+                    notes: "Level hips - Don't let hips sag or pike up, maintain neutral spine",
+                    isTime: true
+                },
+                {
+                    name: "Glute Bridge",
+                    prescription: {
+                        "1-2": "3×12 bodyweight",
+                        "3-4": "3×12 @ 20lb",
+                        "5-6": "3×15 @ 20lb",
+                        "7-8": "3×15 @ 30lb"
+                    },
+                    description: "Lie on back with knees bent and feet flat. Drive through heels to lift hips up, squeezing glutes hard at top. Lower with control.",
+                    notes: "Add dumbbell on hips - Place weight across hip bones and hold it there"
+                }
+            ],
+            bandWork: [
+                {
+                    name: "Clamshells",
+                    prescription: {
+                        "1-2": "2×15 each side",
+                        "3-4": "2×20 each side",
+                        "5-6": "3×15 each side",
+                        "7-8": "3×15 each side"
+                    },
+                    description: "Lie on side with band around thighs, knees bent. Keep feet together and open top knee like a clamshell. Control the return.",
+                    notes: "Progress band resistance - Essential for hip stabilizer activation"
+                },
+                {
+                    name: "Monster Walks",
+                    prescription: {
+                        "1-2": "2×20 steps",
+                        "3-4": "2×25 steps",
+                        "5-6": "3×20 steps",
+                        "7-8": "3×20 steps"
+                    },
+                    description: "Band around thighs, quarter squat position. Take wide diagonal steps forward, maintaining tension on band throughout.",
+                    notes: "Stay low - Keep knees bent and tension on the band constant"
+                },
+                {
+                    name: "Lateral Band Walks",
+                    prescription: {
+                        "1-2": "2×12 each direction",
+                        "3-4": "2×15 each direction",
+                        "5-6": "2×15 each direction",
+                        "7-8": "3×15 each direction"
+                    },
+                    description: "Band around ankles or thighs, slight squat. Step sideways keeping feet parallel and maintaining band tension.",
+                    notes: "Keep tension constant - Don't let feet come together, keep band stretched"
+                },
+                {
+                    name: "Banded Hip Flexion",
+                    prescription: {
+                        "1-2": "2×10 each leg",
+                        "3-4": "2×12 each leg",
+                        "5-6": "2×12 each leg",
+                        "7-8": "3×12 each leg"
+                    },
+                    description: "Standing with band around ankle attached to anchor behind you. Drive knee up toward chest against band resistance.",
+                    notes: "Standing, knee to chest - Important for hip flexor strength and cycling"
+                },
+                {
+                    name: "Fire Hydrants",
+                    prescription: {
+                        "1-2": "2×10 each side",
+                        "3-4": "2×12 each side",
+                        "5-6": "2×12 each side",
+                        "7-8": "2×15 each side"
+                    },
+                    description: "On hands and knees with band around thighs. Keeping knee bent at 90°, lift leg out to side like a dog at a hydrant. Lower with control.",
+                    notes: "Control at top - Pause at the top to really feel glute medius working"
+                }
+            ]
+        };
+
+        // Cycling schedule data
+        const cyclingSchedule = [
+            { week: 1, mon: "Act 20", tue: "Thresh 35", wed: "Rec 25", thu: "Rest", fri: "VO2 30", sat: "End 90", sun: "Rec 40", total: "4:00" },
+            { week: 2, mon: "Act 20", tue: "Thresh 35", wed: "Rec 25", thu: "Rest", fri: "VO2 30", sat: "End 90", sun: "Rec 40", total: "4:00" },
+            { week: 3, mon: "Act 20", tue: "Thresh 35", wed: "Rec 25", thu: "Rest", fri: "VO2 35", sat: "End 95", sun: "Rec 45", total: "4:15" },
+            { week: 4, mon: "Act 20", tue: "Thresh 40", wed: "Rec 30", thu: "Rest", fri: "VO2 35", sat: "End 100", sun: "Rec 45", total: "4:30" },
+            { week: 5, mon: "Act 25", tue: "Thresh 40", wed: "Rec 30", thu: "Rest", fri: "VO2 40", sat: "End 105", sun: "Rec 45", total: "4:45" },
+            { week: 6, mon: "Act 25", tue: "Thresh 45", wed: "Rec 30", thu: "Rest", fri: "VO2 40", sat: "End 110", sun: "Rec 50", total: "5:00" },
+            { week: 7, mon: "Act 25", tue: "Thresh 45", wed: "Rec 35", thu: "Rest", fri: "VO2 45", sat: "End 120", sun: "Rec 50", total: "5:20" },
+            { week: 8, mon: "Act 20", tue: "Thresh 30", wed: "Rec 20", thu: "Rest", fri: "VO2 25", sat: "Test Ride", sun: "Rest", total: "~4:00" }
+        ];
+
+        const cyclingDetails = {
+            "Activation Rides": "Mostly Zone 1-2 with 3-4 short bursts (10-15 sec) at high cadence to wake up the legs. Not hard efforts—just spin-ups.",
+            "Threshold Sessions": {
+                "Weeks 1-2": "3×(3-4-3) min Z3-Z4-Z3 with 3 min rest between sets",
+                "Weeks 3-4": "2×10 min Z4 with 5 min recovery, or 3×8 min Z4",
+                "Weeks 5-6": "2×12 min Z4 or 3×10 min Z4",
+                "Week 7": "2×15 min Z4 or 1×20 min Z4 (peak)"
+            },
+            "VO2 Max Sessions": {
+                "Target": "203-230W (Zone 5) at high cadence 95-105 RPM to reduce knee stress",
+                "Weeks 1-2": "4×3 min Z5 with 3 min easy recovery",
+                "Weeks 3-4": "5×3 min Z5 or 4×4 min Z5",
+                "Weeks 5-6": "5×4 min Z5 or 4×5 min Z5",
+                "Week 7": "5×5 min Z5 (peak)"
+            },
+            "Endurance Rides": "Zone 2, conversational pace. Goal is time in the saddle. Consider taking these outside in weeks 6-7 for Sausalito ride practice.",
+            "Recovery Rides": "Zone 1-2, very easy. Should feel almost too easy. If they affect Monday freshness, take full rest instead."
+        };
+
+        // Workout state
+        let currentWeek = "1-2";
+        let currentSession = null;
+        let currentExerciseIndex = 0;
+        let currentSet = 1;
+        let totalSets = 0;
+        let isResting = false;
+        let restTime = 90; // Default rest time in seconds
+        let restTimer = null;
+        let restRemaining = 0;
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        // Initialize app
+        function init() {
+            setupTabs();
+            setupWeekSelector();
+            renderCyclingSchedule();
+            renderCyclingDetails();
+            renderExerciseInfo();
+        }
+
+        function setupTabs() {
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+                    tab.classList.add('active');
+                    document.getElementById(tab.dataset.tab).classList.add('active');
+                });
+            });
+        }
+
+        function setupWeekSelector() {
+            document.querySelectorAll('.week-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.week-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentWeek = btn.dataset.week;
+                });
+            });
+        }
+
+        function startWorkout(sessionType) {
+            currentSession = sessionType;
+            currentExerciseIndex = 0;
+            currentSet = 1;
+            isResting = false;
+
+            document.getElementById('sessionSelect').style.display = 'none';
+            document.getElementById('workoutView').style.display = 'block';
+
+            renderWorkoutCard();
+            setupSwipeGestures();
+        }
+
+        function setupSwipeGestures() {
+            const card = document.getElementById('workoutCard');
+
+            card.addEventListener('touchstart', (e) => {
+                touchStartX = e.changedTouches[0].screenX;
+            });
+
+            card.addEventListener('touchmove', (e) => {
+                touchEndX = e.changedTouches[0].screenX;
+                const diff = touchEndX - touchStartX;
+
+                if (Math.abs(diff) > 10) {
+                    card.classList.add('swiping');
+                    card.style.transform = `translateX(${diff}px) rotate(${diff * 0.02}deg)`;
+                }
+            });
+
+            card.addEventListener('touchend', () => {
+                const diff = touchEndX - touchStartX;
+                card.classList.remove('swiping');
+                card.style.transform = '';
+
+                if (diff > 100) {
+                    // Swiped right - go to rest
+                    completeSet();
+                } else if (diff < -100) {
+                    // Swiped left - skip rest
+                    if (isResting) {
+                        skipRest();
+                    }
+                }
+            });
+        }
+
+        function renderWorkoutCard() {
+            const card = document.getElementById('workoutCard');
+            const sessionExercises = exercises[currentSession];
+
+            if (currentExerciseIndex >= sessionExercises.length) {
+                renderCompletion();
+                return;
+            }
+
+            const exercise = sessionExercises[currentExerciseIndex];
+            const prescription = exercise.prescription[currentWeek];
+            const sets = parseInt(prescription.match(/(\d+)×/)?.[1] || 3);
+            totalSets = sets;
+
+            const progress = `Exercise ${currentExerciseIndex + 1}/${sessionExercises.length}`;
+
+            if (isResting) {
+                card.innerHTML = `
+                    <div class="workout-header">
+                        <div class="workout-progress">${progress}</div>
+                        <div class="workout-title">Rest</div>
+                        <div class="workout-subtitle">Recovery between sets</div>
+                    </div>
+                    <div class="workout-body">
+                        <div class="rest-display">
+                            <div class="rest-message">Great work! Take a breather</div>
+                            <div class="rest-timer" id="restTimerDisplay">${formatTime(restRemaining)}</div>
+                            <div class="rest-controls">
+                                <button class="rest-preset" onclick="adjustRest(60)">1:00</button>
+                                <button class="rest-preset" onclick="adjustRest(90)">1:30</button>
+                                <button class="rest-preset" onclick="adjustRest(120)">2:00</button>
+                                <button class="rest-preset" onclick="adjustRest(180)">3:00</button>
+                            </div>
+                            <div class="action-buttons">
+                                <button class="btn btn-secondary" onclick="skipRest()">Skip Rest</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="swipe-hint">
+                        ← Swipe left to skip rest
+                    </div>
+                `;
+                startRestTimer();
+            } else {
+                card.innerHTML = `
+                    <div class="workout-header">
+                        <div class="workout-progress">${progress} • Set ${currentSet}/${totalSets}</div>
+                        <div class="workout-title">${exercise.name}</div>
+                        <div class="workout-subtitle">${prescription}</div>
+                    </div>
+                    <div class="workout-body">
+                        <div class="progress-bar-container">
+                            <div class="progress-bar" style="width: ${(currentSet / totalSets) * 100}%"></div>
+                        </div>
+                        <div class="set-display">Set ${currentSet}</div>
+                        <div class="exercise-description">${exercise.description}</div>
+                        <div class="exercise-notes">${exercise.notes}</div>
+                        <div class="action-buttons">
+                            <button class="btn btn-primary" onclick="completeSet()">Complete Set</button>
+                        </div>
+                    </div>
+                    <div class="swipe-hint">
+                        Swipe right to complete set →
+                    </div>
+                `;
+            }
+        }
+
+        function completeSet() {
+            if (currentSet < totalSets) {
+                currentSet++;
+                isResting = true;
+                restRemaining = restTime;
+                renderWorkoutCard();
+            } else {
+                // Move to next exercise
+                currentExerciseIndex++;
+                currentSet = 1;
+                renderWorkoutCard();
+            }
+        }
+
+        function startRestTimer() {
+            if (restTimer) clearInterval(restTimer);
+
+            restTimer = setInterval(() => {
+                restRemaining--;
+                document.getElementById('restTimerDisplay').textContent = formatTime(restRemaining);
+
+                if (restRemaining <= 0) {
+                    playAlert();
+                    clearInterval(restTimer);
+                }
+            }, 1000);
+        }
+
+        function skipRest() {
+            if (restTimer) clearInterval(restTimer);
+            isResting = false;
+            renderWorkoutCard();
+        }
+
+        function adjustRest(seconds) {
+            restRemaining = seconds;
+            restTime = seconds; // Update default
+            document.getElementById('restTimerDisplay').textContent = formatTime(restRemaining);
+        }
+
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function renderCompletion() {
+            const card = document.getElementById('workoutCard');
+            const sessionNames = {
+                'bandWork': 'Hip & Glute Activation',
+                'sessionA': 'Session A: Squat & Pull',
+                'sessionB': 'Session B: Hinge & Lunge'
+            };
+
+            card.innerHTML = `
+                <div class="completion-card">
+                    <div class="completion-icon">🎉</div>
+                    <div class="completion-title">Workout Complete!</div>
+                    <div class="completion-message">Great job finishing ${sessionNames[currentSession]}</div>
+                    <div class="action-buttons">
+                        <button class="btn btn-success" onclick="endWorkout()">Done</button>
+                        <button class="btn btn-secondary" onclick="restartWorkout()">Do Another</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function endWorkout() {
+            document.getElementById('sessionSelect').style.display = 'block';
+            document.getElementById('workoutView').style.display = 'none';
+        }
+
+        function restartWorkout() {
+            document.getElementById('sessionSelect').style.display = 'block';
+            document.getElementById('workoutView').style.display = 'none';
+        }
+
+        function playAlert() {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            oscillator.frequency.value = 800;
+            oscillator.type = 'sine';
+
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.5);
+        }
+
+        function renderCyclingSchedule() {
+            const table = document.getElementById('cyclingTable');
+            let html = `
+                <thead>
+                    <tr>
+                        <th>Week</th>
+                        <th>Mon</th>
+                        <th>Tue</th>
+                        <th>Wed</th>
+                        <th>Thu</th>
+                        <th>Fri</th>
+                        <th>Sat</th>
+                        <th>Sun</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+            `;
+
+            cyclingSchedule.forEach(week => {
+                html += `<tr>
+                    <td><strong>Week ${week.week}</strong></td>
+                    <td>${formatWorkout(week.mon)}</td>
+                    <td>${formatWorkout(week.tue)}</td>
+                    <td>${formatWorkout(week.wed)}</td>
+                    <td>${formatWorkout(week.thu)}</td>
+                    <td>${formatWorkout(week.fri)}</td>
+                    <td>${formatWorkout(week.sat)}</td>
+                    <td>${formatWorkout(week.sun)}</td>
+                    <td><strong>${week.total}</strong></td>
+                </tr>`;
+            });
+
+            html += '</tbody>';
+            table.innerHTML = html;
+        }
+
+        function formatWorkout(workout) {
+            if (workout === "Rest") return '<span class="workout-type type-rest">Rest</span>';
+            if (workout === "Test Ride") return '<span class="workout-type type-end">Test Ride</span>';
+
+            const type = workout.split(' ')[0].toLowerCase();
+            const typeClass = `type-${type === 'thresh' ? 'thresh' : type === 'vo2' ? 'vo2' : type === 'end' ? 'end' : type === 'rec' ? 'rec' : 'act'}`;
+            return `<span class="workout-type ${typeClass}">${workout}</span>`;
+        }
+
+        function renderCyclingDetails() {
+            const container = document.getElementById('cyclingDetails');
+            let html = '';
+
+            for (const [title, content] of Object.entries(cyclingDetails)) {
+                html += `<div class="cycling-details">`;
+                html += `<h4>${title}</h4>`;
+
+                if (typeof content === 'string') {
+                    html += `<p>${content}</p>`;
+                } else {
+                    for (const [key, value] of Object.entries(content)) {
+                        html += `<p><strong>${key}:</strong> ${value}</p>`;
+                    }
+                }
+
+                html += `</div>`;
+            }
+
+            container.innerHTML = html;
+        }
+
+        function renderExerciseInfo() {
+            const container = document.getElementById('exerciseInfo');
+            const allExercises = [...exercises.sessionA, ...exercises.sessionB, ...exercises.bandWork];
+
+            let html = '';
+            allExercises.forEach(exercise => {
+                html += `
+                    <div class="info-section">
+                        <h3>${exercise.name}</h3>
+                        <p><strong>How to perform:</strong> ${exercise.description}</p>
+                        <p><strong>Key points:</strong> ${exercise.notes}</p>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // Initialize on load
+        init();
+    </script>
+</body>
+</html>
