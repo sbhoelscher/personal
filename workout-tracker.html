@@ -841,11 +841,11 @@
         function setupSwipeGestures() {
             const card = document.getElementById('workoutCard');
 
-            card.addEventListener('touchstart', (e) => {
+            const handleTouchStart = (e) => {
                 touchStartX = e.changedTouches[0].screenX;
-            });
+            };
 
-            card.addEventListener('touchmove', (e) => {
+            const handleTouchMove = (e) => {
                 touchEndX = e.changedTouches[0].screenX;
                 const diff = touchEndX - touchStartX;
 
@@ -853,9 +853,9 @@
                     card.classList.add('swiping');
                     card.style.transform = `translateX(${diff}px) rotate(${diff * 0.02}deg)`;
                 }
-            });
+            };
 
-            card.addEventListener('touchend', () => {
+            const handleTouchEnd = () => {
                 const diff = touchEndX - touchStartX;
                 card.classList.remove('swiping');
                 card.style.transform = '';
@@ -869,7 +869,16 @@
                         skipRest();
                     }
                 }
-            });
+            };
+
+            // Remove existing listeners before adding new ones
+            card.removeEventListener('touchstart', handleTouchStart);
+            card.removeEventListener('touchmove', handleTouchMove);
+            card.removeEventListener('touchend', handleTouchEnd);
+
+            card.addEventListener('touchstart', handleTouchStart);
+            card.addEventListener('touchmove', handleTouchMove);
+            card.addEventListener('touchend', handleTouchEnd);
         }
 
         function renderWorkoutCard() {
