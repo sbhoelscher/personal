@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>8-Week Cycling & Strength Tracker</title>
     <style>
         * {
@@ -163,6 +166,14 @@
             color: #667eea;
             margin: 30px 0;
             line-height: 1;
+        }
+
+        .plank-timer {
+            font-size: 96px;
+            font-weight: 800;
+            color: #667eea;
+            margin: 30px 0;
+            font-variant-numeric: tabular-nums;
         }
 
         .rest-display {
@@ -772,6 +783,9 @@
         let restRemaining = 0;
         let touchStartX = 0;
         let touchEndX = 0;
+        let plankTimer = null;
+        let plankRemaining = 0;
+        let wakeLock = null;
 
         // Initialize app
         function init() {
@@ -803,17 +817,48 @@
             });
         }
 
-        function startWorkout(sessionType) {
+        async function startWorkout(sessionType) {
             currentSession = sessionType;
             currentExerciseIndex = 0;
             currentSet = 1;
             isResting = false;
+
+            // Request wake lock to keep screen on
+            await requestWakeLock();
 
             document.getElementById('sessionSelect').style.display = 'none';
             document.getElementById('workoutView').style.display = 'block';
 
             renderWorkoutCard();
             setupSwipeGestures();
+        }
+
+        async function requestWakeLock() {
+            try {
+                if ('wakeLock' in navigator) {
+                    wakeLock = await navigator.wakeLock.request('screen');
+                    console.log('Wake Lock activated');
+
+                    // Re-request wake lock when page becomes visible again
+                    document.addEventListener('visibilitychange', async () => {
+                        if (wakeLock !== null && document.visibilityState === 'visible') {
+                            wakeLock = await navigator.wakeLock.request('screen');
+                        }
+                    });
+                }
+            } catch (err) {
+                console.log('Wake Lock not supported or failed:', err);
+            }
+        }
+
+        function releaseWakeLock() {
+            if (wakeLock !== null) {
+                wakeLock.release()
+                    .then(() => {
+                        wakeLock = null;
+                        console.log('Wake Lock released');
+                    });
+            }
         }
 
         function setupSwipeGestures() {
@@ -887,6 +932,7 @@
                             <div class="rest-message">Great work! Take a breather</div>
                             <div class="rest-timer" id="restTimerDisplay">${formatTime(restRemaining)}</div>
                             <div class="rest-controls">
+                                <button class="rest-preset" onclick="adjustRest(30)">0:30</button>
                                 <button class="rest-preset" onclick="adjustRest(60)">1:00</button>
                                 <button class="rest-preset" onclick="adjustRest(90)">1:30</button>
                                 <button class="rest-preset" onclick="adjustRest(120)">2:00</button>
@@ -902,6 +948,31 @@
                     </div>
                 `;
                 startRestTimer();
+            } else if (exercise.isTime) {
+                // Plank with timer
+                const timeInSeconds = parseInt(prescription.match(/(\d+)\s*sec/)?.[1] || 30);
+                card.innerHTML = `
+                    <div class="workout-header">
+                        <div class="workout-progress">${progress} • Set ${currentSet}/${totalSets}</div>
+                        <div class="workout-title">${exercise.name}</div>
+                        <div class="workout-subtitle">${prescription}</div>
+                    </div>
+                    <div class="workout-body">
+                        <div class="progress-bar-container">
+                            <div class="progress-bar" style="width: ${(currentSet / totalSets) * 100}%"></div>
+                        </div>
+                        <div class="plank-timer" id="plankTimerDisplay">${formatTime(timeInSeconds)}</div>
+                        <div class="exercise-description">${exercise.description}</div>
+                        <div class="exercise-notes">${exercise.notes}</div>
+                        <div class="action-buttons">
+                            <button class="btn btn-primary" id="startPlankBtn" onclick="startPlankTimer(${timeInSeconds})">Start Timer</button>
+                            <button class="btn btn-secondary" onclick="completeSet()" style="display: none;" id="plankCompleteBtn">Complete Set</button>
+                        </div>
+                    </div>
+                    <div class="swipe-hint">
+                        Swipe right after completing hold →
+                    </div>
+                `;
             } else {
                 card.innerHTML = `
                     <div class="workout-header">
@@ -949,8 +1020,30 @@
                 document.getElementById('restTimerDisplay').textContent = formatTime(restRemaining);
 
                 if (restRemaining <= 0) {
-                    playAlert();
+                    playWhistle();
                     clearInterval(restTimer);
+                    // Auto-advance after rest period
+                    setTimeout(() => {
+                        skipRest();
+                    }, 1000);
+                }
+            }, 1000);
+        }
+
+        function startPlankTimer(duration) {
+            if (plankTimer) clearInterval(plankTimer);
+
+            plankRemaining = duration;
+            document.getElementById('startPlankBtn').style.display = 'none';
+
+            plankTimer = setInterval(() => {
+                plankRemaining--;
+                document.getElementById('plankTimerDisplay').textContent = formatTime(plankRemaining);
+
+                if (plankRemaining <= 0) {
+                    playWhistle();
+                    clearInterval(plankTimer);
+                    document.getElementById('plankCompleteBtn').style.display = 'inline-block';
                 }
             }, 1000);
         }
@@ -995,31 +1088,51 @@
         }
 
         function endWorkout() {
+            releaseWakeLock();
+            if (restTimer) clearInterval(restTimer);
+            if (plankTimer) clearInterval(plankTimer);
             document.getElementById('sessionSelect').style.display = 'block';
             document.getElementById('workoutView').style.display = 'none';
         }
 
         function restartWorkout() {
+            releaseWakeLock();
+            if (restTimer) clearInterval(restTimer);
+            if (plankTimer) clearInterval(plankTimer);
             document.getElementById('sessionSelect').style.display = 'block';
             document.getElementById('workoutView').style.display = 'none';
         }
 
-        function playAlert() {
+        function playWhistle() {
             const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            const oscillator = audioContext.createOscillator();
+
+            // Create a whistle sound (two-tone)
+            const oscillator1 = audioContext.createOscillator();
+            const oscillator2 = audioContext.createOscillator();
             const gainNode = audioContext.createGain();
 
-            oscillator.connect(gainNode);
+            oscillator1.connect(gainNode);
+            oscillator2.connect(gainNode);
             gainNode.connect(audioContext.destination);
 
-            oscillator.frequency.value = 800;
-            oscillator.type = 'sine';
+            // First tone
+            oscillator1.frequency.setValueAtTime(800, audioContext.currentTime);
+            oscillator1.frequency.exponentialRampToValueAtTime(1200, audioContext.currentTime + 0.1);
+
+            // Second tone (slight harmony)
+            oscillator2.frequency.setValueAtTime(1000, audioContext.currentTime);
+            oscillator2.frequency.exponentialRampToValueAtTime(1400, audioContext.currentTime + 0.1);
+
+            oscillator1.type = 'sine';
+            oscillator2.type = 'sine';
 
             gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
 
-            oscillator.start(audioContext.currentTime);
-            oscillator.stop(audioContext.currentTime + 0.5);
+            oscillator1.start(audioContext.currentTime);
+            oscillator2.start(audioContext.currentTime);
+            oscillator1.stop(audioContext.currentTime + 0.2);
+            oscillator2.stop(audioContext.currentTime + 0.2);
         }
 
         function renderCyclingSchedule() {
