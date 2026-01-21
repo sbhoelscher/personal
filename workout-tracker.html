@@ -920,6 +920,7 @@
         let plankTimer = null;
         let plankRemaining = 0;
         let wakeLock = null;
+        let shouldAutoAdvance = true;
 
         // Initialize app
         function init() {
@@ -1152,6 +1153,7 @@
 
         function startRestTimer() {
             if (restTimer) clearInterval(restTimer);
+            shouldAutoAdvance = true; // Enable auto-advance for natural timer completion
 
             restTimer = setInterval(() => {
                 restRemaining--;
@@ -1160,10 +1162,12 @@
                 if (restRemaining <= 0) {
                     playWhistle();
                     clearInterval(restTimer);
-                    // Auto-advance after rest period
-                    setTimeout(() => {
-                        skipRest();
-                    }, 1000);
+                    // Auto-advance only if it wasn't manually adjusted recently
+                    if (shouldAutoAdvance) {
+                        setTimeout(() => {
+                            skipRest();
+                        }, 1000);
+                    }
                 }
             }, 1000);
         }
@@ -1194,10 +1198,22 @@
 
         function adjustRest(seconds) {
             if (restTimer) clearInterval(restTimer);
+            shouldAutoAdvance = false; // Disable auto-advance when manually adjusting
             restRemaining = seconds;
             restTime = seconds; // Update default
             document.getElementById('restTimerDisplay').textContent = formatTime(restRemaining);
-            startRestTimer(); // Restart the timer with new duration
+
+            // Start timer that will NOT auto-advance
+            restTimer = setInterval(() => {
+                restRemaining--;
+                document.getElementById('restTimerDisplay').textContent = formatTime(restRemaining);
+
+                if (restRemaining <= 0) {
+                    playWhistle();
+                    clearInterval(restTimer);
+                    // Don't auto-advance when manually adjusted
+                }
+            }, 1000);
         }
 
         function formatTime(seconds) {
