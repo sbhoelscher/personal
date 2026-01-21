@@ -514,9 +514,14 @@
             <div class="card" id="sessionSelect">
                 <h2>Choose Your Workout</h2>
                 <div class="session-selector">
+                    <div class="session-card" onclick="startWorkout('morningActivation')">
+                        <h3>Morning Activation</h3>
+                        <p>Daily • Wake up hips and core</p>
+                        <p style="margin-top: 10px; font-size: 16px; font-weight: 700;">5 exercises • 5 min</p>
+                    </div>
                     <div class="session-card" onclick="startWorkout('bandWork')">
                         <h3>Hip & Glute Activation</h3>
-                        <p>Essential warmup before strength sessions</p>
+                        <p>Before strength • Essential warmup</p>
                         <p style="margin-top: 10px; font-size: 16px; font-weight: 700;">5 exercises</p>
                     </div>
                     <div class="session-card" onclick="startWorkout('sessionA')">
@@ -528,6 +533,11 @@
                         <h3>Session B: Hinge & Lunge</h3>
                         <p>Monday • Hip hinge patterns & single-leg work</p>
                         <p style="margin-top: 10px; font-size: 16px; font-weight: 700;">5 exercises</p>
+                    </div>
+                    <div class="session-card" onclick="startWorkout('postRideStretching')">
+                        <h3>Post-Ride Stretching</h3>
+                        <p>After rides • Focus on tight areas</p>
+                        <p style="margin-top: 10px; font-size: 16px; font-weight: 700;">5 stretches • 5-10 min</p>
                     </div>
                 </div>
             </div>
@@ -736,6 +746,130 @@
                     },
                     description: "On hands and knees with band around thighs. Keeping knee bent at 90°, lift leg out to side like a dog at a hydrant. Lower with control.",
                     notes: "Control at top - Pause at the top to really feel glute medius working"
+                }
+            ],
+            morningActivation: [
+                {
+                    name: "Cat-Cow Stretches",
+                    prescription: {
+                        "1-2": "1×10 reps",
+                        "3-4": "1×10 reps",
+                        "5-6": "1×10 reps",
+                        "7-8": "1×10 reps"
+                    },
+                    description: "Start on hands and knees. Arch back and look up (cow), then round spine and tuck chin (cat). Flow smoothly between positions.",
+                    notes: "Wake up your spine - Move slowly and breathe deeply"
+                },
+                {
+                    name: "World's Greatest Stretch",
+                    prescription: {
+                        "1-2": "1×5 each side",
+                        "3-4": "1×5 each side",
+                        "5-6": "1×5 each side",
+                        "7-8": "1×5 each side"
+                    },
+                    description: "Lunge position with back leg straight. Place hand inside front foot, rotate torso and reach other arm up toward ceiling. Return and repeat.",
+                    notes: "Hip mobility and thoracic rotation - Hold each rotation for 2-3 seconds"
+                },
+                {
+                    name: "Glute Bridges",
+                    prescription: {
+                        "1-2": "1×10 reps",
+                        "3-4": "1×10 reps",
+                        "5-6": "1×10 reps",
+                        "7-8": "1×10 reps"
+                    },
+                    description: "Lie on back with knees bent. Drive through heels to lift hips, squeeze glutes at top, lower with control.",
+                    notes: "Activate glutes - Squeeze hard at the top"
+                },
+                {
+                    name: "Bird-Dogs",
+                    prescription: {
+                        "1-2": "1×8 each side",
+                        "3-4": "1×8 each side",
+                        "5-6": "1×8 each side",
+                        "7-8": "1×8 each side"
+                    },
+                    description: "On hands and knees, extend opposite arm and leg. Keep hips level and core tight. Return and alternate sides.",
+                    notes: "Core stability - Move slowly and maintain balance"
+                },
+                {
+                    name: "Standing Hip Flexor Raises",
+                    prescription: {
+                        "1-2": "1×10 each side",
+                        "3-4": "1×10 each side",
+                        "5-6": "1×10 each side",
+                        "7-8": "1×10 each side"
+                    },
+                    description: "Stand tall, drive one knee up toward chest. Lower with control and repeat. Keep core engaged and avoid leaning back.",
+                    notes: "Hip flexor activation - Important for cycling"
+                }
+            ],
+            postRideStretching: [
+                {
+                    name: "Hip Flexor Stretch",
+                    prescription: {
+                        "1-2": "1×30-60 sec each",
+                        "3-4": "1×30-60 sec each",
+                        "5-6": "1×30-60 sec each",
+                        "7-8": "1×30-60 sec each"
+                    },
+                    description: "Kneeling lunge position with back knee on ground. Push hips forward gently until you feel stretch in front of back hip. Keep torso upright.",
+                    notes: "Essential for cyclists - Hip flexors get tight from riding",
+                    isTime: true,
+                    defaultTime: 45
+                },
+                {
+                    name: "Pigeon Pose / Figure-4 Stretch",
+                    prescription: {
+                        "1-2": "1×30-60 sec each",
+                        "3-4": "1×30-60 sec each",
+                        "5-6": "1×30-60 sec each",
+                        "7-8": "1×30-60 sec each"
+                    },
+                    description: "Lying on back, cross one ankle over opposite knee. Pull bottom leg toward chest until you feel stretch in hip/glute of crossed leg.",
+                    notes: "Glute and hip stretch - Breathe deeply and relax into it",
+                    isTime: true,
+                    defaultTime: 45
+                },
+                {
+                    name: "Quad Stretch",
+                    prescription: {
+                        "1-2": "1×30 sec each",
+                        "3-4": "1×30 sec each",
+                        "5-6": "1×30 sec each",
+                        "7-8": "1×30 sec each"
+                    },
+                    description: "Standing, bend one knee and pull foot toward glutes. Keep knees together and push hips forward slightly. Hold onto something for balance.",
+                    notes: "Front of thigh - Don't arch your back",
+                    isTime: true,
+                    defaultTime: 30
+                },
+                {
+                    name: "Hamstring Stretch",
+                    prescription: {
+                        "1-2": "1×30 sec each",
+                        "3-4": "1×30 sec each",
+                        "5-6": "1×30 sec each",
+                        "7-8": "1×30 sec each"
+                    },
+                    description: "Place one heel on low step or bench. Keep leg straight and hinge at hips, reaching toward toes. Keep back flat.",
+                    notes: "Back of thigh - Feel stretch behind knee",
+                    isTime: true,
+                    defaultTime: 30
+                },
+                {
+                    name: "Chest Opener / Doorway Stretch",
+                    prescription: {
+                        "1-2": "1×30 sec",
+                        "3-4": "1×30 sec",
+                        "5-6": "1×30 sec",
+                        "7-8": "1×30 sec"
+                    },
+                    description: "Stand in doorway with forearms on frame. Step forward gently until you feel stretch across chest. Keep shoulders down.",
+                    notes: "Counteracts aero position - Opens up chest and shoulders",
+                    isTime: true,
+                    defaultTime: 30
                 }
             ]
         };
@@ -949,8 +1083,8 @@
                 `;
                 startRestTimer();
             } else if (exercise.isTime) {
-                // Plank with timer
-                const timeInSeconds = parseInt(prescription.match(/(\d+)\s*sec/)?.[1] || 30);
+                // Plank/stretch with timer
+                const timeInSeconds = exercise.defaultTime || parseInt(prescription.match(/(\d+)\s*sec/)?.[1] || 30);
                 card.innerHTML = `
                     <div class="workout-header">
                         <div class="workout-progress">${progress} • Set ${currentSet}/${totalSets}</div>
@@ -999,6 +1133,9 @@
         }
 
         function completeSet() {
+            // Clear any existing timers
+            if (plankTimer) clearInterval(plankTimer);
+
             if (currentSet < totalSets) {
                 currentSet++;
                 isResting = true;
@@ -1008,6 +1145,7 @@
                 // Move to next exercise
                 currentExerciseIndex++;
                 currentSet = 1;
+                isResting = false;
                 renderWorkoutCard();
             }
         }
@@ -1055,9 +1193,11 @@
         }
 
         function adjustRest(seconds) {
+            if (restTimer) clearInterval(restTimer);
             restRemaining = seconds;
             restTime = seconds; // Update default
             document.getElementById('restTimerDisplay').textContent = formatTime(restRemaining);
+            startRestTimer(); // Restart the timer with new duration
         }
 
         function formatTime(seconds) {
@@ -1069,9 +1209,11 @@
         function renderCompletion() {
             const card = document.getElementById('workoutCard');
             const sessionNames = {
+                'morningActivation': 'Morning Activation',
                 'bandWork': 'Hip & Glute Activation',
                 'sessionA': 'Session A: Squat & Pull',
-                'sessionB': 'Session B: Hinge & Lunge'
+                'sessionB': 'Session B: Hinge & Lunge',
+                'postRideStretching': 'Post-Ride Stretching'
             };
 
             card.innerHTML = `
