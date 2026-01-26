@@ -912,7 +912,7 @@
         let currentSet = 1;
         let totalSets = 0;
         let isResting = false;
-        let restTime = 90; // Default rest time in seconds
+        let restTime = 30; // Default rest time in seconds
         let restTimer = null;
         let restRemaining = 0;
         let touchStartX = 0;
@@ -920,7 +920,7 @@
         let plankTimer = null;
         let plankRemaining = 0;
         let wakeLock = null;
-        let shouldAutoAdvance = true;
+        let shouldAutoAdvance = false;
 
         // Initialize app
         function init() {
@@ -1136,38 +1136,38 @@
         function completeSet() {
             // Clear any existing timers
             if (plankTimer) clearInterval(plankTimer);
+            if (restTimer) clearInterval(restTimer);
 
             if (currentSet < totalSets) {
                 currentSet++;
                 isResting = true;
                 restRemaining = restTime;
+                shouldAutoAdvance = false; // Disable auto-advance by default
                 renderWorkoutCard();
             } else {
                 // Move to next exercise
                 currentExerciseIndex++;
                 currentSet = 1;
                 isResting = false;
+                shouldAutoAdvance = false;
                 renderWorkoutCard();
             }
         }
 
         function startRestTimer() {
             if (restTimer) clearInterval(restTimer);
-            shouldAutoAdvance = true; // Enable auto-advance for natural timer completion
 
             restTimer = setInterval(() => {
                 restRemaining--;
-                document.getElementById('restTimerDisplay').textContent = formatTime(restRemaining);
+                const display = document.getElementById('restTimerDisplay');
+                if (display) {
+                    display.textContent = formatTime(restRemaining);
+                }
 
                 if (restRemaining <= 0) {
                     playWhistle();
                     clearInterval(restTimer);
-                    // Auto-advance only if it wasn't manually adjusted recently
-                    if (shouldAutoAdvance) {
-                        setTimeout(() => {
-                            skipRest();
-                        }, 1000);
-                    }
+                    // Never auto-advance - user must manually proceed
                 }
             }, 1000);
         }
@@ -1198,20 +1198,25 @@
 
         function adjustRest(seconds) {
             if (restTimer) clearInterval(restTimer);
-            shouldAutoAdvance = false; // Disable auto-advance when manually adjusting
             restRemaining = seconds;
             restTime = seconds; // Update default
-            document.getElementById('restTimerDisplay').textContent = formatTime(restRemaining);
+            const display = document.getElementById('restTimerDisplay');
+            if (display) {
+                display.textContent = formatTime(restRemaining);
+            }
 
-            // Start timer that will NOT auto-advance
+            // Start timer with no auto-advance
             restTimer = setInterval(() => {
                 restRemaining--;
-                document.getElementById('restTimerDisplay').textContent = formatTime(restRemaining);
+                const display = document.getElementById('restTimerDisplay');
+                if (display) {
+                    display.textContent = formatTime(restRemaining);
+                }
 
                 if (restRemaining <= 0) {
                     playWhistle();
                     clearInterval(restTimer);
-                    // Don't auto-advance when manually adjusted
+                    // Never auto-advance
                 }
             }, 1000);
         }
