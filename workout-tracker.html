@@ -6,7 +6,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>8-Week Cycling & Strength Tracker</title>
+    <title>8-Week Polarized Cycling & Strength Plan</title>
     <style>
         * {
             margin: 0;
@@ -489,8 +489,8 @@
 <body>
     <div class="container">
         <header>
-            <h1>8-Week Cycling & Strength Tracker</h1>
-            <p class="subtitle">Building toward Marin rides with threshold fitness and hip stability | FTP: 193W</p>
+            <h1>8-Week Polarized Cycling & Strength Plan</h1>
+            <p class="subtitle">Hard days hard, easy days easy. Building aerobic base and high-intensity capacity | FTP: 193W | Zone 5: 203-230W</p>
         </header>
 
         <div class="tabs">
@@ -538,6 +538,11 @@
                         <h3>Post-Ride Stretching</h3>
                         <p>After rides • Focus on tight areas</p>
                         <p style="margin-top: 10px; font-size: 16px; font-weight: 700;">5 stretches • 5-10 min</p>
+                    </div>
+                    <div class="session-card" onclick="startWorkout('eveningMobility')">
+                        <h3>Evening Mobility</h3>
+                        <p>Rest days • Foam rolling & deep stretches</p>
+                        <p style="margin-top: 10px; font-size: 16px; font-weight: 700;">5 exercises • 10-15 min</p>
                     </div>
                 </div>
             </div>
@@ -871,38 +876,119 @@
                     isTime: true,
                     defaultTime: 30
                 }
+            ],
+            eveningMobility: [
+                {
+                    name: "Foam Rolling - Quads",
+                    prescription: {
+                        "1-2": "1×60-120 sec",
+                        "3-4": "1×60-120 sec",
+                        "5-6": "1×60-120 sec",
+                        "7-8": "1×60-120 sec"
+                    },
+                    description: "Lie face down with foam roller under your thighs. Roll slowly from hip to just above knee, pausing on tender spots.",
+                    notes: "1-2 min per area - Move slowly, breathe through tender spots",
+                    isTime: true,
+                    defaultTime: 90
+                },
+                {
+                    name: "Foam Rolling - IT Band & Glutes",
+                    prescription: {
+                        "1-2": "1×60-120 sec each",
+                        "3-4": "1×60-120 sec each",
+                        "5-6": "1×60-120 sec each",
+                        "7-8": "1×60-120 sec each"
+                    },
+                    description: "Lie on your side with roller under outer thigh. Roll from hip to knee. Then sit on roller for glutes, crossing one ankle over opposite knee.",
+                    notes: "Important for IT band health - Don't roll directly on the knee",
+                    isTime: true,
+                    defaultTime: 90
+                },
+                {
+                    name: "Foam Rolling - Upper Back",
+                    prescription: {
+                        "1-2": "1×60-120 sec",
+                        "3-4": "1×60-120 sec",
+                        "5-6": "1×60-120 sec",
+                        "7-8": "1×60-120 sec"
+                    },
+                    description: "Lie on back with roller under upper back. Support head with hands. Roll from mid-back to shoulders, arching over roller.",
+                    notes: "Great for cycling posture - Opens up thoracic spine",
+                    isTime: true,
+                    defaultTime: 90
+                },
+                {
+                    name: "90/90 Hip Stretch",
+                    prescription: {
+                        "1-2": "1×60 sec each",
+                        "3-4": "1×60 sec each",
+                        "5-6": "1×60 sec each",
+                        "7-8": "1×60 sec each"
+                    },
+                    description: "Sit with one leg bent 90° in front, other leg bent 90° to the side. Sit tall and lean forward slightly over front shin. Switch sides.",
+                    notes: "Deep hip opener - Keep both sit bones grounded",
+                    isTime: true,
+                    defaultTime: 60
+                },
+                {
+                    name: "Thoracic Spine Rotations",
+                    prescription: {
+                        "1-2": "1×10 each side",
+                        "3-4": "1×10 each side",
+                        "5-6": "1×10 each side",
+                        "7-8": "1×10 each side"
+                    },
+                    description: "On hands and knees, place one hand behind head. Rotate torso to bring elbow toward opposite arm, then rotate up toward ceiling. Repeat other side.",
+                    notes: "Counteracts cycling position - Move slowly and breathe"
+                }
             ]
         };
 
-        // Cycling schedule data
+        // Cycling schedule data - Polarized Plan
+        // Day structure: Mon=Z2, Tue=AM Thresh + PM Strength A, Wed=Z2, Thu=AM VO2 + PM Strength B, Fri=Rest, Sat=Long, Sun=Rest/Z2
         const cyclingSchedule = [
-            { week: 1, mon: "Act 20", tue: "Thresh 35", wed: "Rec 25", thu: "Rest", fri: "VO2 30", sat: "End 90", sun: "Rec 40", total: "4:00" },
-            { week: 2, mon: "Act 20", tue: "Thresh 35", wed: "Rec 25", thu: "Rest", fri: "VO2 30", sat: "End 90", sun: "Rec 40", total: "4:00" },
-            { week: 3, mon: "Act 20", tue: "Thresh 35", wed: "Rec 25", thu: "Rest", fri: "VO2 35", sat: "End 95", sun: "Rec 45", total: "4:15" },
-            { week: 4, mon: "Act 20", tue: "Thresh 40", wed: "Rec 30", thu: "Rest", fri: "VO2 35", sat: "End 100", sun: "Rec 45", total: "4:30" },
-            { week: 5, mon: "Act 25", tue: "Thresh 40", wed: "Rec 30", thu: "Rest", fri: "VO2 40", sat: "End 105", sun: "Rec 45", total: "4:45" },
-            { week: 6, mon: "Act 25", tue: "Thresh 45", wed: "Rec 30", thu: "Rest", fri: "VO2 40", sat: "End 110", sun: "Rec 50", total: "5:00" },
-            { week: 7, mon: "Act 25", tue: "Thresh 45", wed: "Rec 35", thu: "Rest", fri: "VO2 45", sat: "End 120", sun: "Rec 50", total: "5:20" },
-            { week: 8, mon: "Act 20", tue: "Thresh 30", wed: "Rec 20", thu: "Rest", fri: "VO2 25", sat: "Test Ride", sun: "Rest", total: "~4:00" }
+            { week: 1, mon: "Z2 30", tue: "Thresh 35", wed: "Z2 30", thu: "VO2 30", fri: "Rest", sat: "Long 100", sun: "Rest/Z2 30", total: "4:15-4:45" },
+            { week: 2, mon: "Z2 30", tue: "Thresh 35", wed: "Z2 30", thu: "VO2 30", fri: "Rest", sat: "Long 105", sun: "Rest/Z2 30", total: "4:20-4:50" },
+            { week: 3, mon: "Z2 40", tue: "Thresh 40", wed: "Z2 40", thu: "VO2 35", fri: "Rest", sat: "Long 115", sun: "Rest/Z2 35", total: "4:50-5:25" },
+            { week: 4, mon: "Z2 35", tue: "Thresh 30", wed: "Z2 35", thu: "VO2 25", fri: "Rest", sat: "Long 100", sun: "Rest", total: "4:05", note: "Mini-deload" },
+            { week: 5, mon: "Z2 45", tue: "Thresh 40", wed: "Z2 45", thu: "VO2 40", fri: "Rest", sat: "Long 120", sun: "Rest/Z2 40", total: "5:30-6:10" },
+            { week: 6, mon: "Z2 50", tue: "Thresh 45", wed: "Z2 50", thu: "VO2 40", fri: "Rest", sat: "Long 130", sun: "Rest/Z2 40", total: "5:55-6:35" },
+            { week: 7, mon: "Z2 55", tue: "Thresh 45", wed: "Z2 55", thu: "VO2 45", fri: "Rest", sat: "Long 150", sun: "Rest/Z2 45", total: "6:30-7:15" },
+            { week: 8, mon: "Z2 30", tue: "Thresh 25", wed: "Z2 30", thu: "Rest", fri: "Rest", sat: "Test Ride", sun: "Rest", total: "~4:00", note: "Deload" }
         ];
 
         const cyclingDetails = {
-            "Activation Rides": "Mostly Zone 1-2 with 3-4 short bursts (10-15 sec) at high cadence to wake up the legs. Not hard efforts—just spin-ups.",
-            "Threshold Sessions": {
+            "Zone 2 Sessions": "True aerobic endurance. Conversational pace, nose-breathing possible. Heart rate typically 60-70% max. The goal is accumulating time at this intensity to build mitochondrial density and fat oxidation. Don't drift up into Zone 3—if you can't hold a conversation, back off.",
+            "Threshold Sessions (Zone 4)": {
+                "Overview": "Lactate threshold work. Should feel 'comfortably hard'—sustainable but demanding.",
                 "Weeks 1-2": "3×(3-4-3) min Z3-Z4-Z3 with 3 min rest between sets",
-                "Weeks 3-4": "2×10 min Z4 with 5 min recovery, or 3×8 min Z4",
+                "Weeks 3-4": "2×10 min Z4 with 5 min recovery, or 3×8 min Z4 (Week 4: reduce to 2×8 min)",
                 "Weeks 5-6": "2×12 min Z4 or 3×10 min Z4",
                 "Week 7": "2×15 min Z4 or 1×20 min Z4 (peak)"
             },
-            "VO2 Max Sessions": {
-                "Target": "203-230W (Zone 5) at high cadence 95-105 RPM to reduce knee stress",
+            "VO2 Max Sessions (Zone 5)": {
+                "Target": "203-230W at high cadence 95-105 RPM to reduce knee stress",
                 "Weeks 1-2": "4×3 min Z5 with 3 min easy recovery",
-                "Weeks 3-4": "5×3 min Z5 or 4×4 min Z5",
+                "Weeks 3-4": "5×3 min Z5 or 4×4 min Z5 (Week 4: reduce to 4×3 min)",
                 "Weeks 5-6": "5×4 min Z5 or 4×5 min Z5",
-                "Week 7": "5×5 or 6×3 or 5×4 min Z5 (peak)"
+                "Week 7": "5×5 min or 6×4 min Z5 (peak)"
             },
-            "Endurance Rides": "Zone 2, conversational pace. Goal is time in the saddle. Consider taking these outside in weeks 6-7 for Sausalito ride practice.",
-            "Recovery Rides": "Zone 1-2, very easy. Should feel almost too easy. If they affect Monday freshness, take full rest instead."
+            "Long Rides": "Zone 2, conversational pace. Time in saddle is the goal. As duration increases in weeks 5-7, consider taking these outside for real-world riding practice—hills, wind, traffic awareness. Bring nutrition for rides over 90 min.",
+            "Weekly Structure": {
+                "Mon": "Zone 2",
+                "Tue": "AM: Threshold intervals | PM: Strength A",
+                "Wed": "Zone 2",
+                "Thu": "AM: VO2 max intervals | PM: Strength B",
+                "Fri": "Rest",
+                "Sat": "Long ride",
+                "Sun": "Rest or optional Zone 2"
+            },
+            "Monitoring": {
+                "RHR trending up": "If resting heart rate rises 5+ bpm for 2-3 days, consider extra rest",
+                "HRV dropping": "Consistent HRV suppression suggests incomplete recovery",
+                "VO2 intervals suffering": "If you can't hit target power, fatigue is accumulating",
+                "Sunday flexibility": "Use optional Z2 if recovered, skip if you need more rest"
+            }
         };
 
         // Workout state
@@ -920,7 +1006,6 @@
         let plankTimer = null;
         let plankRemaining = 0;
         let wakeLock = null;
-        let shouldAutoAdvance = false;
 
         // Initialize app
         function init() {
@@ -1134,91 +1219,121 @@
         }
 
         function completeSet() {
-            // Clear any existing timers
-            if (plankTimer) clearInterval(plankTimer);
-            if (restTimer) clearInterval(restTimer);
+            // Clear any existing timers first
+            clearAllTimers();
 
             if (currentSet < totalSets) {
                 currentSet++;
                 isResting = true;
                 restRemaining = restTime;
-                shouldAutoAdvance = false; // Disable auto-advance by default
                 renderWorkoutCard();
             } else {
                 // Move to next exercise
                 currentExerciseIndex++;
                 currentSet = 1;
                 isResting = false;
-                shouldAutoAdvance = false;
                 renderWorkoutCard();
             }
         }
 
+        function clearAllTimers() {
+            if (plankTimer) {
+                clearInterval(plankTimer);
+                plankTimer = null;
+            }
+            if (restTimer) {
+                clearInterval(restTimer);
+                restTimer = null;
+            }
+        }
+
         function startRestTimer() {
-            if (restTimer) clearInterval(restTimer);
+            // Always clear any existing timer first
+            if (restTimer) {
+                clearInterval(restTimer);
+                restTimer = null;
+            }
+
+            // Store initial value to prevent any stale closure issues
+            let timeRemaining = restRemaining;
 
             restTimer = setInterval(() => {
-                restRemaining--;
+                timeRemaining--;
+                restRemaining = timeRemaining;
+
                 const display = document.getElementById('restTimerDisplay');
                 if (display) {
-                    display.textContent = formatTime(restRemaining);
+                    display.textContent = formatTime(timeRemaining);
                 }
 
-                if (restRemaining <= 0) {
-                    playWhistle();
+                if (timeRemaining <= 0) {
                     clearInterval(restTimer);
-                    // Never auto-advance - user must manually proceed
+                    restTimer = null;
+                    playWhistle();
+                    // Timer complete - show "Ready!" but NEVER auto-advance
+                    // User must tap Skip Rest or swipe to proceed
+                    if (display) {
+                        display.textContent = "Ready!";
+                    }
                 }
             }, 1000);
         }
 
         function startPlankTimer(duration) {
-            if (plankTimer) clearInterval(plankTimer);
+            // Clear any existing timer
+            if (plankTimer) {
+                clearInterval(plankTimer);
+                plankTimer = null;
+            }
 
+            let timeRemaining = duration;
             plankRemaining = duration;
-            document.getElementById('startPlankBtn').style.display = 'none';
+
+            const startBtn = document.getElementById('startPlankBtn');
+            if (startBtn) startBtn.style.display = 'none';
 
             plankTimer = setInterval(() => {
-                plankRemaining--;
-                document.getElementById('plankTimerDisplay').textContent = formatTime(plankRemaining);
+                timeRemaining--;
+                plankRemaining = timeRemaining;
 
-                if (plankRemaining <= 0) {
-                    playWhistle();
+                const display = document.getElementById('plankTimerDisplay');
+                if (display) {
+                    display.textContent = formatTime(timeRemaining);
+                }
+
+                if (timeRemaining <= 0) {
                     clearInterval(plankTimer);
-                    document.getElementById('plankCompleteBtn').style.display = 'inline-block';
+                    plankTimer = null;
+                    playWhistle();
+                    const completeBtn = document.getElementById('plankCompleteBtn');
+                    if (completeBtn) completeBtn.style.display = 'inline-block';
                 }
             }, 1000);
         }
 
         function skipRest() {
-            if (restTimer) clearInterval(restTimer);
+            clearAllTimers();
             isResting = false;
             renderWorkoutCard();
         }
 
         function adjustRest(seconds) {
-            if (restTimer) clearInterval(restTimer);
+            // Clear existing timer
+            if (restTimer) {
+                clearInterval(restTimer);
+                restTimer = null;
+            }
+
             restRemaining = seconds;
-            restTime = seconds; // Update default
+            restTime = seconds; // Update default for next rest period
+
             const display = document.getElementById('restTimerDisplay');
             if (display) {
                 display.textContent = formatTime(restRemaining);
             }
 
-            // Start timer with no auto-advance
-            restTimer = setInterval(() => {
-                restRemaining--;
-                const display = document.getElementById('restTimerDisplay');
-                if (display) {
-                    display.textContent = formatTime(restRemaining);
-                }
-
-                if (restRemaining <= 0) {
-                    playWhistle();
-                    clearInterval(restTimer);
-                    // Never auto-advance
-                }
-            }, 1000);
+            // Restart the timer with the new duration
+            startRestTimer();
         }
 
         function formatTime(seconds) {
@@ -1234,7 +1349,8 @@
                 'bandWork': 'Hip & Glute Activation',
                 'sessionA': 'Session A: Squat & Pull',
                 'sessionB': 'Session B: Hinge & Lunge',
-                'postRideStretching': 'Post-Ride Stretching'
+                'postRideStretching': 'Post-Ride Stretching',
+                'eveningMobility': 'Evening Mobility'
             };
 
             card.innerHTML = `
@@ -1252,16 +1368,14 @@
 
         function endWorkout() {
             releaseWakeLock();
-            if (restTimer) clearInterval(restTimer);
-            if (plankTimer) clearInterval(plankTimer);
+            clearAllTimers();
             document.getElementById('sessionSelect').style.display = 'block';
             document.getElementById('workoutView').style.display = 'none';
         }
 
         function restartWorkout() {
             releaseWakeLock();
-            if (restTimer) clearInterval(restTimer);
-            if (plankTimer) clearInterval(plankTimer);
+            clearAllTimers();
             document.getElementById('sessionSelect').style.display = 'block';
             document.getElementById('workoutView').style.display = 'none';
         }
@@ -1338,9 +1452,17 @@
         function formatWorkout(workout) {
             if (workout === "Rest") return '<span class="workout-type type-rest">Rest</span>';
             if (workout === "Test Ride") return '<span class="workout-type type-end">Test Ride</span>';
+            if (workout.startsWith("Rest/")) return `<span class="workout-type type-rest">${workout}</span>`;
 
             const type = workout.split(' ')[0].toLowerCase();
-            const typeClass = `type-${type === 'thresh' ? 'thresh' : type === 'vo2' ? 'vo2' : type === 'end' ? 'end' : type === 'rec' ? 'rec' : 'act'}`;
+            let typeClass = 'type-act';
+            if (type === 'thresh') typeClass = 'type-thresh';
+            else if (type === 'vo2') typeClass = 'type-vo2';
+            else if (type === 'long') typeClass = 'type-end';
+            else if (type === 'z2') typeClass = 'type-rec';
+            else if (type === 'end') typeClass = 'type-end';
+            else if (type === 'rec') typeClass = 'type-rec';
+
             return `<span class="workout-type ${typeClass}">${workout}</span>`;
         }
 
